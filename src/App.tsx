@@ -1,35 +1,38 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import { Container, Typography, Button, Box } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import UsersTable from "./components/UsersTable";
+import UserDialog from "./components/UserDialog";
+import ConfirmDialog from "./components/ConfirmDialog";
+import { useAppDispatch } from "./hooks/useAppDispatch";
+import { openAddDialog } from "./features/ui/uiSlice";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const dispatch = useAppDispatch();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Container maxWidth="lg">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mt={4}
+        mb={2}
+      >
+        <Typography variant="h4">User Management Dashboard</Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => dispatch(openAddDialog())}
+        >
+          Add User
+        </Button>
+      </Box>
 
-export default App
+      <UsersTable />
+
+      <UserDialog />
+      <ConfirmDialog />
+    </Container>
+  );
+}

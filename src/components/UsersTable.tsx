@@ -16,10 +16,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useGetUsersQuery } from "../features/users/usersApi";
 import { useAppDispatch } from "../hooks/useAppDispatch";
-import { openConfirm, openEditDialog } from "../features/ui/uiSlice";
+import { openEditDialog, openConfirm } from "../features/ui/uiSlice";
 
 export default function UsersTable() {
-  const { data: users, isLoading, isError, error } = useGetUsersQuery;
+  const { data: users, isLoading, isError, error } = useGetUsersQuery();
+
   const dispatch = useAppDispatch();
 
   if (isLoading)
@@ -32,7 +33,9 @@ export default function UsersTable() {
   if (isError)
     return (
       <Box py={6}>
-        <Typography color="error">Error loading users.</Typography>
+        <Typography color="error">
+          Error loading users: {JSON.stringify(error)}
+        </Typography>
       </Box>
     );
 
@@ -43,7 +46,7 @@ export default function UsersTable() {
           <TableRow>
             <TableCell>Name</TableCell>
             <TableCell>Email</TableCell>
-            <TableCell>UserName</TableCell>
+            <TableCell>Username</TableCell>
             <TableCell align="right">Actions</TableCell>
           </TableRow>
         </TableHead>

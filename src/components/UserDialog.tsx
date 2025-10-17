@@ -20,6 +20,7 @@ import {
   useGetUsersQuery,
 } from "../features/users/usersApi";
 import { useAppDispatch } from "../hooks/useAppDispatch";
+import { showNotification } from "../features/notifications/notificationsSlice";
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -66,14 +67,21 @@ export default function UserDialog() {
     try {
       if (editingUserId) {
         await updateUser({ id: editingUserId, ...data }).unwrap();
+        dispatch(
+          showNotification({ message: "User updated", severity: "success" })
+        );
       } else {
-        // jsonplaceholder will return a mock id
         await addUser(data as any).unwrap();
+        dispatch(
+          showNotification({ message: "User added", severity: "success" })
+        );
       }
       dispatch(closeDialog());
-    } catch (err) {
-      // For now log; later hook in snackbars for user feedback
-      console.error("Mutation error:", err);
+    } catch (err: any) {
+      console.error(err);
+      dispatch(
+        showNotification({ message: "Operation failed", severity: "error" })
+      );
     }
   };
 

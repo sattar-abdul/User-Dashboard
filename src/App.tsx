@@ -6,6 +6,7 @@ import UserDialog from "./components/UserDialog";
 import ConfirmDialog from "./components/ConfirmDialog";
 import { useAppDispatch } from "./hooks/useAppDispatch";
 import { openAddDialog } from "./features/ui/uiSlice";
+import NotificationBar from "./components/NotificationBar";
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -33,6 +34,7 @@ export default function App() {
 
       <UserDialog />
       <ConfirmDialog />
+      <NotificationBar />
     </Container>
   );
 }

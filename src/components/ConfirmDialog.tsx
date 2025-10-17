@@ -13,6 +13,7 @@ import type { RootState } from "../app/store";
 import { closeConfirm } from "../features/ui/uiSlice";
 import { useDeleteUserMutation } from "../features/users/usersApi";
 import { useAppDispatch } from "../hooks/useAppDispatch";
+import { showNotification } from "../features/notifications/notificationsSlice";
 
 export default function ConfirmDialog() {
   const dispatch = useAppDispatch();
@@ -24,10 +25,15 @@ export default function ConfirmDialog() {
     if (!confirmTargetId) return;
     try {
       await deleteUser(confirmTargetId).unwrap();
+      dispatch(
+        showNotification({ message: "User deleted", severity: "success" })
+      );
       dispatch(closeConfirm());
     } catch (err) {
-      // handle error with snackbar later
-      console.error("Delete failed", err);
+      console.error(err);
+      dispatch(
+        showNotification({ message: "Delete failed", severity: "error" })
+      );
     }
   };
 

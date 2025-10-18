@@ -20,7 +20,7 @@ export default function App() {
         mt={4}
         mb={2}
       >
-        <Typography mr={2} variant="h4">User Management Dashboard</Typography>
+        <Typography variant="h4">User Management Dashboard</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}

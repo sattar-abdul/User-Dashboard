@@ -62,19 +62,33 @@ export default function UsersTable() {
   return (
     <Box>
       {/* Search bar */}
-      <Box mb={2} display="flex" justifyContent="flex-end">
+      <Box mb={2} display="flex" justifyContent="flex-start">
         <TextField
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by name..."
           size="small"
-          variant="outlined"
+          variant="filled"
+          sx={{ width: 340, backgroundColor: "#ffffff", borderRadius: 1.5 }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <SearchIcon />
               </InputAdornment>
             ),
+            endAdornment: query ? (
+              <InputAdornment position="end">
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setQuery("");
+                    setDebouncedQuery("");
+                  }}
+                >
+                  ✕
+                </IconButton>
+              </InputAdornment>
+            ) : undefined,
           }}
         />
       </Box>

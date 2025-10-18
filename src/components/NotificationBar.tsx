@@ -1,5 +1,5 @@
 // src/components/NotificationBar.tsx
-import React from "react";
+
 import { Snackbar, Alert } from "@mui/material";
 import { useSelector } from "react-redux";
 import type { RootState } from "../app/store";

@@ -32,14 +32,14 @@ export const usersApi = createApi({
         method: "PATCH",
         body: patch,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Users", id }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: "Users", id }],
     }),
     deleteUser: builder.mutation<{ success: boolean; id: number }, number>({
       query: (id) => ({
         url: `/users/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [
+      invalidatesTags: (_result, _error, id) => [
         { type: "Users", id },
         { type: "Users", id: "LIST" },
       ],

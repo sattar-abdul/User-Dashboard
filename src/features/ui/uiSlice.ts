@@ -6,14 +6,14 @@ interface UiState {
   dialogOpen: boolean;
   editingUserId: number | null;
   confirmOpen: boolean;
-  confirmTargetId: number | null;
+  deletingUserId: number | null;
 }
 
 const initialState: UiState = {
   dialogOpen: false,
   editingUserId: null,
   confirmOpen: false,
-  confirmTargetId: null,
+  deletingUserId: null,
 };
 
 const uiSlice = createSlice({
@@ -34,11 +34,11 @@ const uiSlice = createSlice({
     },
     openConfirm(state, action: PayloadAction<number>) {
       state.confirmOpen = true;
-      state.confirmTargetId = action.payload;
+      state.deletingUserId = action.payload;
     },
     closeConfirm(state) {
       state.confirmOpen = false;
-      state.confirmTargetId = null;
+      state.deletingUserId = null;
     },
   },
 });
@@ -50,4 +50,5 @@ export const {
   openConfirm,
   closeConfirm,
 } = uiSlice.actions;
+
 export default uiSlice.reducer;

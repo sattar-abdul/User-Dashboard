@@ -1,5 +1,5 @@
 // src/components/UserDialog.tsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,12 +14,8 @@ import * as z from "zod";
 import { useSelector } from "react-redux";
 import type { RootState } from "../app/store";
 import { closeDialog } from "../features/ui/uiSlice";
-import {
-  useAddUserMutation,
-  useUpdateUserMutation,
-  useGetUsersQuery,
-} from "../features/users/usersApi";
 import { useAppDispatch } from "../hooks/useAppDispatch";
+import { useUsers } from "../hooks/useUsers";
 import { showNotification } from "../features/notifications/notificationsSlice";
 
 const schema = z.object({
@@ -33,11 +29,11 @@ export default function UserDialog() {
   const dispatch = useAppDispatch();
   const { dialogOpen, editingUserId } = useSelector((s: RootState) => s.ui);
 
-  // Get users so we can prefill when editing
-  const { data: users } = useGetUsersQuery();
+  // local users API (in-memory)
+  const { users, addUser, updateUser } = useUsers();
 
-  const [addUser, { isLoading: adding }] = useAddUserMutation();
-  const [updateUser, { isLoading: updating }] = useUpdateUserMutation();
+  // submission indicator
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
     register,
@@ -49,39 +45,46 @@ export default function UserDialog() {
     resolver: zodResolver(schema),
   });
 
-  // Prefill when editingUserId changes
+  // prefill fields when editing
   useEffect(() => {
-    if (editingUserId && users) {
+    if (editingUserId != null) {
       const u = users.find((x) => x.id === editingUserId);
       if (u) {
         setValue("name", u.name);
         setValue("email", u.email);
         setValue("username", u.username);
+        return;
       }
-    } else {
-      reset();
     }
-  }, [editingUserId, users]);
+    // otherwise reset (for add)
+    reset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editingUserId, users, setValue, reset]);
 
   const onSubmit = async (data: FormSchema) => {
+    setIsSubmitting(true);
     try {
-      if (editingUserId) {
-        await updateUser({ id: editingUserId, ...data }).unwrap();
+      if (editingUserId != null) {
+        // update existing user
+        await Promise.resolve(updateUser({ id: editingUserId, ...data }));
         dispatch(
           showNotification({ message: "User updated", severity: "success" })
         );
       } else {
-        await addUser(data as any).unwrap();
+        // add new user
+        await Promise.resolve(addUser(data)); /* addUser dispatch; wrapped */
         dispatch(
           showNotification({ message: "User added", severity: "success" })
         );
       }
       dispatch(closeDialog());
-    } catch (err: any) {
-      console.error(err);
+    } catch (err) {
+      console.error("User dialog operation failed", err);
       dispatch(
         showNotification({ message: "Operation failed", severity: "error" })
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -92,7 +95,9 @@ export default function UserDialog() {
       fullWidth
       maxWidth="sm"
     >
-      <DialogTitle>{editingUserId ? "Edit User" : "Add User"}</DialogTitle>
+      <DialogTitle>
+        {editingUserId != null ? "Edit User" : "Add User"}
+      </DialogTitle>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <DialogContent>
@@ -123,13 +128,14 @@ export default function UserDialog() {
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={() => dispatch(closeDialog())}>Cancel</Button>
           <Button
-            type="submit"
-            variant="contained"
-            disabled={adding || updating}
+            onClick={() => dispatch(closeDialog())}
+            disabled={isSubmitting}
           >
-            {editingUserId ? "Save Changes" : "Add User"}
+            Cancel
+          </Button>
+          <Button type="submit" variant="contained" disabled={isSubmitting}>
+            {editingUserId != null ? "Save Changes" : "Add User"}
           </Button>
         </DialogActions>
       </form>

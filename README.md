@@ -97,3 +97,11 @@ Then open your browser and go to: http://localhost:5173/
 
 ### 5. Notifications
 - Snackbar notifications for Add/Edit/Delete operations.
+
+
+## Deployment
+Deployed on Netlify:
+```bash
+npm run build
+netlify deploy
+```

@@ -71,7 +71,6 @@ npm install
 
 ### 3️. Run the development server
 ```bash
-Copy code
 npm run dev
 ```
 
